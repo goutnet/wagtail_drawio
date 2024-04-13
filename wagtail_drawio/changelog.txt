@@ -1,0 +1,3 @@
+wagtail-drawio (0.1.0) stable, urgency=low
+
+  * Initial release.
