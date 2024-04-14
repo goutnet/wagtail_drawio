@@ -25,4 +25,5 @@ class DrawIOImageBlock(blocks.StructBlock):  # pylint: disable=too-few-public-me
     class Meta:  # pylint: disable=too-few-public-methods
         icon = "drawio"
         label = _("DrawIO Diagram")
+
         template = "wagtail_drawio/blocks/drawio_image_block.html"

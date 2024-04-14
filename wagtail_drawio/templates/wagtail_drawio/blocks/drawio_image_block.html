@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+{% spaceless %}
+{% if not value.diagram.empty %}
+<img
+    src="data:image/png;base64,{{ value.diagram.png_as_base64}}"
+    alt="{{ value.diagram.title }}"
+    title="{{ value.diagram.title }}"
+    width="{{ value.diagram.width }}"
+    height="{{ value.diagram.height }}"
+    class="drawio_image"
+    />
+{% endif %}
+{% endspaceless %}

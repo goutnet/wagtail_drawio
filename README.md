@@ -80,6 +80,12 @@ To Edit the diagram, directly double click on the image to bring the diagram edi
 
 Add a block to your page, and select the diagram from there.
 
+### Using the Js Code
+
+if you are only looking for a quick JS fix, have a look at `wagtail_drawio/static/js/drawio_widget.js`. This simple js class
+can either be used with or without jQuery to transform an `&lt;img/&gt;` tag into an editor directly. Please check the
+javascript code directly, the top section provides full usage guidelines.
+
 
 ## Project Status
 

@@ -3,9 +3,13 @@ Wagtail DrawIO Block Models
 This code is distributed under the MIT License, see the LICENSE file
 """
 
-import base64
-import zlib
+import io
 import os
+import base64
+import struct
+import zlib
+
+import png
 
 from django.db import models
 from django.conf import settings
@@ -68,7 +72,7 @@ class DrawioImage(models.Model):
     )
     uploaded_by_user.wagtail_reference_index_ignore = True
 
-    def png_content(self, strip_data=False, decode=False):
+    def png_data(self, strip_data=False, decode=False):
         """
         Returns the PNG content of the image.
         if strip_data the compressed text section is removed
@@ -77,20 +81,50 @@ class DrawioImage(models.Model):
 
         if decode or strip_data:
             data = base64.b64decode(b64_content)
-            # To be verified:
-            # The compressed text section is the last section of the PNG
-            # (IHDR, PLTE, IDAT, IEND)
+
+            # DrawIO stores the diagram in the zTXt section of the PNG
+            # specific property is named 'mxfile'
+            # The following read the png, then remove this property
             if strip_data:
-                try:
-                    decompress = zlib.decompress(data, 15)
-                    if decode:
-                        return decompress
-                    return base64.b64encode(decompress)
 
-                except zlib.error:
-                    # likely not compressed data there
-                    print("DEBUG: zlib error, no compress data?")
+                reader = png.Reader(bytes=data)
+                chunks = list(reader.chunks())
+                for i, chunk in enumerate(chunks):
+                    chunk_type, content = chunk
+                    print(f"PNG chunk: {chunk_type!r}")
+                    if chunk_type == b"tEXt":
+                        kwend = content.find(b"\x00")
+                        keyword = content[:kwend].decode("utf-8")
+                        print("PNG chunk: ", keyword)
+                        if keyword == "mxfile":
+                            chunks.pop(i)
+                            break
 
+                # recreate the png:
+                # PNG format is a series of chunks,
+                # each chunk is composed of:
+                # - 4 bytes: length of the content
+                # - 4 bytes: chunk type
+                # - content
+                # - 4 bytes: CRC32 of the chunk type and content
+                # https://en.wikipedia.org/wiki/Portable_Network_Graphics#File_header
+
+                output = io.BytesIO()
+                output.write(b"\x89PNG\r\n\x1a\n")
+                for chunk_type, content in chunks:
+
+                    output.write(struct.pack("!I", len(content)))
+                    output.write(chunk_type)
+                    output.write(content)
+
+                    crc = zlib.crc32(chunk_type)
+                    crc = zlib.crc32(content, crc)
+                    output.write(struct.pack("!I", crc & 0xFFFFFFFF))
+
+                data = output.getvalue()
+
+            if not decode:
+                return base64.b64encode(data).decode("utf-8")
             return data
         return b64_content
 
@@ -117,19 +151,19 @@ class DrawioImage(models.Model):
         """Returns a list of tags"""
         return ", ".join(self.tags.names())
 
-    def png_image(self):
-        """shortcut to png_content"""
-        return self.png_content(decode=True, strip_data=True)
+    def png_as_image(self):
+        """shortcut to png_data"""
+        return self.png_data(strip_data=True, decode=True)
 
-    def png_base64(self):
-        """shortcut to png_content"""
-        return self.png_content(decode=False, strip_data=True)
+    def png_as_base64(self):
+        """shortcut to png_data"""
+        return self.png_data(strip_data=True, decode=False)
 
     def empty(self):
         """
         Returns True if the image is empty, False otherwise
         """
-        return not self.diagram
+        return self.diagram == ""
 
     class Meta:
         verbose_name = _("DrawIO Diagram")

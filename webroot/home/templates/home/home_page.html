@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static wagtailcore_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -12,6 +12,13 @@ Delete the line below if you're just getting started and want to remove the welc
 {% endblock extra_css %}
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {% include_block page.body %}
+        </div>
+    </div>
+</div>
 
 {% comment %}
 Delete the line below if you're just getting started and want to remove the welcome screen!
