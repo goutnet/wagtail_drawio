@@ -1,3 +1,9 @@
 include LICENSE
 include README.rst
 include wagtail_drawio/changelog.txt
+include wagtail_drawio/templates/wagtail_drawio/admin/icons/*.svg
+include wagtail_drawio/templates/wagtail_drawio/admin/icons/LICENSE
+include wagtail_drawio/templates/wagtail_drawio/widgets/*.html
+include wagtail_drawio/static/css/*.css
+include wagtail_drawio/static/js/*.js
+include wagtail_drawio/static/admin/media/*.svg
