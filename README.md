@@ -89,6 +89,7 @@ javascript code directly, the top section provides full usage guidelines.
 
 ## Project Status
 
+While still green, this project is already usable as is, some
 This project is at a very early stage, and will move along as I use it internally. Features to come:
 
 * Filter diagrams by tags
