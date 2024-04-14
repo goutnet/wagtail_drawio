@@ -7,25 +7,21 @@ This code is distributed under the MIT License
 
 from wagtail import hooks
 from wagtail.snippets.models import register_snippet
-from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.views.snippets import SnippetViewSetGroup
 
-# from wagtail.admin.menu import MenuItem
-
-from .models import DrawioImage
+from .snippets import DrawioImageSnippetViewSet
 
 
-class DrawioImageSnippetViewSet(SnippetViewSet):
-    """Adding edition of Drawio image models"""
+class DrawioImageSnippetViewSetGroup(SnippetViewSetGroup):
+    """Adding a group for Drawio image models"""
 
-    model = DrawioImage
+    menu_label = "Drawio"
+    menu_icon = "drawio"
 
-    menu_label = "Drawio Images"
-    icon = "drawio"
-
-    list_display = ("pk", "title", "created_at")
+    items = (DrawioImageSnippetViewSet,)
 
 
-register_snippet(DrawioImageSnippetViewSet)
+register_snippet(DrawioImageSnippetViewSetGroup)
 
 
 @hooks.register("register_icons")

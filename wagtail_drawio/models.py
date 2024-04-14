@@ -5,11 +5,12 @@ This code is distributed under the MIT License, see the LICENSE file
 
 import base64
 import zlib
+import os
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.forms import widgets
+from django.utils.html import mark_safe
 
 from taggit.managers import TaggableManager
 
@@ -33,6 +34,8 @@ class DrawioImage(models.Model):
     an image can reference multiple blocks, updating the image in one place will
     update it everywhere.
     """
+
+    _placeholder = None
 
     title = models.CharField(max_length=255, help_text=_("Title of the diagram"))
 
@@ -91,6 +94,29 @@ class DrawioImage(models.Model):
             return data
         return b64_content
 
+    @staticmethod
+    def placeholder():
+        """return the base64 encoded placeholder image"""
+        if DrawioImage._placeholder is None:
+            path = os.path.join(
+                os.path.dirname(__file__), "static/admin/media/drawio_edit.svg"
+            )
+
+            with open(path, "rb", encoding="utf8") as f:
+                content = base64.b64encode(f.read())
+            DrawioImage._placeholder = f"data:image/svg;base64,{content}"
+
+    def preview(self):
+        """Returns a list preview tag of the diagram"""
+        content = self.diagram
+        if self.empty():
+            content = self.placeholder()
+        return mark_safe(f'<img src="{content}" alt="{self.title}" width="100px"/>')
+
+    def tags_list(self):
+        """Returns a list of tags"""
+        return ", ".join(self.tags.names())
+
     def png_image(self):
         """shortcut to png_content"""
         return self.png_content(decode=True, strip_data=True)
@@ -106,14 +132,14 @@ class DrawioImage(models.Model):
         return not self.diagram
 
     class Meta:
-        verbose_name = _("DrawIO diagram")
-        verbose_name_plural = _("DrawIO diagrams")
+        verbose_name = _("DrawIO Diagram")
+        verbose_name_plural = _("DrawIO Diagrams")
         permissions = [
             ("choose_diagram", "Can choose a DrawIO diagram"),
         ]
 
     panels = [
-        panels.FieldPanel("title"),
+        panels.FieldPanel("title", icon="title"),
         panels.FieldPanel("diagram", icon="drawio", widget=DrawioWidget),
         panels.FieldPanel("tags"),
         panels.FieldRowPanel(
@@ -122,5 +148,5 @@ class DrawioImage(models.Model):
                 panels.FieldPanel("height"),
             )
         ),
-        panels.FieldPanel("xml_content", classname="collapsed"),
+        panels.FieldPanel("xml_content", classname="collapsed", icon="code"),
     ]
