@@ -94,4 +94,3 @@ This project is at a very early stage, and will move along as I use it internall
 * Filter diagrams by tags
 * Better diagram chooser
 * Edit diagram in place from the Block (t.b.d.)
-* Stream diagram to filter out the XML
