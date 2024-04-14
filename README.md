@@ -26,7 +26,7 @@ For convenience a Makefile is included to build the python package
 
 Add the `wagtail_drawio` into your application in settings:
 
-```
+```python
     INSTALLED_APPS = [
         ...
         'wagtail_drawio',
@@ -35,7 +35,7 @@ Add the `wagtail_drawio` into your application in settings:
 
 Upgrade your database:
 
-```
+```shell
     ./manage.py migrate wagtail_drawio
 ```
 
@@ -58,6 +58,15 @@ Add the `DrawioBlock` into a `Page` or directly into a `StreamField/StreamBlock`
         )
 
 ```
+
+Optionally, you can configure the DrawIO URL by adding the following to your `settings.py`
+
+```python
+    WAGTAIL_DRAWIO_URL = "https://embed.diagrams.net"
+    WAGTAIL_DRAWIO_QUERY_STRING = "ui=atlas&spin=1"
+```
+
+(adjust as needed)
 
 ## Usage
 
