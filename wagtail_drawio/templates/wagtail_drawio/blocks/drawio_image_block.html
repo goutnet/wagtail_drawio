@@ -1,6 +1,6 @@
 {% load wagtailcore_tags %}
 {% spaceless %}
-{% if not value.diagram.empty %}
+{% if value.diagram and value.diagram.pk %}
 <img
     src="{% url 'wagtail_drawio:drawio_image' value.diagram.pk %}"
     alt="{{ value.diagram.title }}"
