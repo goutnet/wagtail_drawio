@@ -22,6 +22,14 @@ from wagtail.admin import panels
 from .widgets import DrawioWidget
 
 
+class DrawioImageField(models.TextField):
+    """override the field definition to provide the appropriate widget"""
+
+    def formfield(self, **kwargs):
+        kwargs["widget"] = DrawioWidget
+        return super().formfield(**kwargs)
+
+
 class DrawioImage(models.Model):
     """
     DrawIO Image model, holds the image and its metadata
@@ -43,8 +51,9 @@ class DrawioImage(models.Model):
 
     title = models.CharField(max_length=255, help_text=_("Title of the diagram"))
 
-    diagram = models.TextField(
-        blank=True, help_text=_("DrawIO diagram (double click to edit)")
+    diagram = DrawioImageField(
+        blank=True,
+        help_text=_("DrawIO diagram (double click to edit)"),
     )
 
     width = models.IntegerField(

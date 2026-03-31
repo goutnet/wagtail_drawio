@@ -10,6 +10,7 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSetGroup
 
 from .snippets import DrawioImageSnippetViewSet
+from .views import drawio_chooser_viewset
 
 
 class DrawioImageSnippetViewSetGroup(SnippetViewSetGroup):
@@ -30,3 +31,9 @@ def register_icons(icons):
     return icons + [
         "wagtail_drawio/admin/icons/drawio.svg",
     ]
+
+
+@hooks.register("register_admin_viewset")
+def register_drawio_chooser_viewset():
+    """register the Drawio chooser viewset"""
+    return drawio_chooser_viewset

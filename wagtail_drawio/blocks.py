@@ -9,9 +9,15 @@ from wagtail import blocks
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 from .models import DrawioImage
+from .views import drawio_chooser_viewset
 
 
-class DrawIOImageBlock(blocks.StructBlock):  # pylint: disable=too-few-public-methods
+DrawioChooserBlockBase = drawio_chooser_viewset.get_block_class(
+    name="DrawioChooserBlock", module_path="wagtail_drawio.blocks"
+)
+
+
+class DrawIOImageChooserBlock(DrawioChooserBlockBase):
     """
     DrawIO Image Block
     This block allows to either select an existing DrawIO object,

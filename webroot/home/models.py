@@ -5,7 +5,7 @@ from wagtail.models import Page
 from wagtail import blocks, fields
 from wagtail.admin import panels
 
-from wagtail_drawio.blocks import DrawIOImageBlock
+from wagtail_drawio.blocks import DrawIOImageChooserBlock
 
 
 class HomePage(Page):
@@ -14,7 +14,8 @@ class HomePage(Page):
     body = fields.StreamField(
         [
             ("paragraph", blocks.RichTextBlock()),
-            ("drawio_image", DrawIOImageBlock()),
+            # ("drawio_image", DrawIOImageBlock()),
+            ("drawio_chooser", DrawIOImageChooserBlock()),
         ],
         null=True,
         blank=True,
