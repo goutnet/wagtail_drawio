@@ -1,12 +1,12 @@
 {% load wagtailcore_tags %}
 {% spaceless %}
-{% if value.diagram and value.diagram.pk %}
+{% if value and value.pk %}
 <img
-    src="{% url 'wagtail_drawio:drawio_image' value.diagram.pk %}"
-    alt="{{ value.diagram.title }}"
-    title="{{ value.diagram.title }}"
-    width="{{ value.diagram.width }}"
-    height="{{ value.diagram.height }}"
+    src="{% url 'wagtail_drawio:drawio_image' value.pk %}"
+    alt="{{ value.title }}"
+    title="{{ value.title }}"
+    width="{{ value.width }}"
+    height="{{ value.height }}"
     class="drawio_image"
     />
 {% endif %}

@@ -14,7 +14,7 @@ from .models import DrawioImage
 def drawio_image(request, image_id):  # pylint: disable=unused-argument
     """Returns the PNG content of a DrawIO image"""
     image = DrawioImage.objects.get(pk=image_id)
-    return HttpResponse(image.as_png_image(), content_type="image/png")
+    return HttpResponse(image.png_as_image(), content_type="image/png")
 
 
 class DrawioChooserViewSet(ChooserViewSet):
