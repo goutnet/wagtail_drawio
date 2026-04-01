@@ -84,7 +84,7 @@ dist: env
 
 .PHONY: test
 test:
-	( . env/bin/activate; PYTHONPATH=. pytest --ds=wagtail_drawio.test_settings --cov=$(PROJECT) --cov-report=term-missing tests/ )
+	( . env/bin/activate; PYTHONPATH=. pytest --ds=tests.test_settings --cov=$(PROJECT) --cov-report=term-missing tests/ )
 
 .PHONY: coverage
 coverage:
