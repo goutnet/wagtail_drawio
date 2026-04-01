@@ -59,7 +59,15 @@ Add the `DrawioBlock` into a `Page` or directly into a `StreamField/StreamBlock`
 
 ```
 
-Optionally, you can configure the DrawIO URL by adding the following to your `settings.py`
+To display usage counts in the diagram list and enable the per-diagram usage tab, add the following to your `settings.py`:
+
+```python
+    WAGTAIL_USAGE_COUNT_ENABLED = True
+```
+
+> **Note:** After enabling this setting on an existing project, run `./manage.py rebuild_references_index` once to backfill usage data for diagrams that were created before the setting was added.
+
+Optionally, you can configure the DrawIO URL by adding the following to your `settings.py`:
 
 ```python
     WAGTAIL_DRAWIO_URL = "https://embed.diagrams.net"

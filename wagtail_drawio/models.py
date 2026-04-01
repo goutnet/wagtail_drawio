@@ -38,7 +38,7 @@ class DrawioImage(models.Model):
 
     the drawIO diagram is actually stored in the compressed text section of the PNG
 
-    - https://www.drawio.com/blog/embedding-walkthrough
+    - https://www.drawio.com/blog/embedding-walk-through
     - https://www.drawio.com/doc/faq/embed-mode
 
     The rationale behind having a model is to allow blocks to refer to the same
@@ -155,6 +155,21 @@ class DrawioImage(models.Model):
         if self.empty():
             content = self.placeholder()
         return mark_safe(f'<img src="{content}" alt="{self.title}" width="100px"/>')
+
+    def usage_count(self):
+        """Returns the number of distinct pages/objects that reference this diagram."""
+        from django.contrib.contenttypes.models import ContentType
+        from wagtail.models import ReferenceIndex
+        ct = ContentType.objects.get_for_model(self.__class__)
+        return (
+            ReferenceIndex.objects
+            .filter(to_content_type=ct, to_object_id=str(self.pk))
+            .values("object_id", "content_type")
+            .distinct()
+            .count()
+        )
+
+    usage_count.short_description = _("Pages using this")
 
     def tags_list(self):
         """Returns a list of tags"""

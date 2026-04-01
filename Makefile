@@ -81,3 +81,11 @@ distclean: clean clean_database
 dist: env
 	mkdir -p $(BUILD) $(OUT)
 	( . env/bin/activate ; python3 setup.py egg_info --egg-base $(BUILD) sdist --dist-dir=$(OUT) )
+
+.PHONY: test
+test:
+	( . env/bin/activate; PYTHONPATH=. pytest --ds=wagtail_drawio.test_settings --cov=$(PROJECT) --cov-report=term-missing tests/ )
+
+.PHONY: coverage
+coverage:
+	( . env/bin/activate; coverage html )

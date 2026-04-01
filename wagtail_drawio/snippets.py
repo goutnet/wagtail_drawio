@@ -19,5 +19,5 @@ class DrawioImageSnippetViewSet(SnippetViewSet):
     menu_label = "Drawio Diagrams"
     icon = "drawio"
 
-    list_display = ("pk", "title", "preview", "created_at", "tags_list")
+    list_display = ("pk", "title", "preview", "created_at", "tags_list", "usage_count")
     list_filter = ("title", "created_at")

@@ -1,2 +1,6 @@
 black
 pylint
+pytest
+pytest-django
+coverage
+pytest-cov

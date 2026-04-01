@@ -163,6 +163,8 @@ STORAGES = {
 
 WAGTAIL_SITE_NAME = "webroot"
 
+WAGTAIL_USAGE_COUNT_ENABLED = True
+
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
 WAGTAILSEARCH_BACKENDS = {
