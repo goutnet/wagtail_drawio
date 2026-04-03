@@ -19,6 +19,7 @@ from django.utils.html import mark_safe
 from taggit.managers import TaggableManager
 
 from wagtail.admin import panels
+from .panels import DrawioUsagePanel
 from .widgets import DrawioWidget
 
 
@@ -207,4 +208,5 @@ class DrawioImage(models.Model):
             )
         ),
         panels.FieldPanel("xml_content", classname="collapsed", icon="code"),
+        DrawioUsagePanel(heading=_("Used on")),
     ]
