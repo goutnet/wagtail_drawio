@@ -1,105 +1,113 @@
-# Wagtail DrawIO - A Wagtail plugin to embed DrawIO diagrams in Wagtail pages
+# wagtail-drawio
 
-## Overview
+A [Wagtail](https://wagtail.org/) plugin that brings [draw.io](https://www.drawio.com/) diagrams natively into your CMS — create, edit, and embed diagrams without leaving Wagtail.
 
-This plugin allows you to embed a DrawIO diagram straight into a page, just like you would with an image.
+## Features
 
-- In view mode, the diagram is shown as a PNG (not embedding the draw IO code)
-- In edit mode, the diagram can be editted directly in place
+- **Dedicated diagram library** — diagrams are first-class Wagtail snippets, managed from a dedicated *Drawio* menu in the admin sidebar. Create, rename, tag, and browse all your diagrams in one place.
+- **In-place draw.io editor** — double-click the diagram thumbnail inside the admin edit form to open the full draw.io editor in an iframe. Save sends the updated PNG (with embedded XML) back to Wagtail without a page reload.
+- **StreamField block** — `DrawIOImageChooserBlock` lets page authors pick any diagram from the library and embed it in any `StreamField`. Updating the diagram in the library automatically updates every page that references it.
+- **Safe rendering** — diagrams are served as clean PNGs via a dedicated view (`/drawio/drawio-image/<pk>/`). The raw XML embedded in the PNG is stripped server-side before delivery, so diagram source is never exposed to end users.
+- **Usage tracking** — when `WAGTAIL_USAGE_COUNT_ENABLED = True`, each diagram shows a *Used on* panel listing every page or object that references it, with direct links to their edit views.
+- **Tagging** — diagrams support Wagtail's standard tagging via `django-taggit`.
+- **Configurable draw.io URL** — point the editor at a self-hosted draw.io instance or customise the query string via Django settings.
+- **Custom draw.io icon** — the draw.io logo is registered as a Wagtail icon and used throughout the admin interface.
 
-## Build
+## Requirements
 
-For convenience a Makefile is included to build the python package
+- Python >= 3.10
+- Django >= 5.1
+- Wagtail >= 6.1
+- `pypng`
 
-```
-   make dist
-```
+## Installation
 
-## Testing it Out
-
-```
-    cd webroot
-    ./manage runserver
-```
-
-## Installing Into a Project
-
-Add the `wagtail_drawio` into your application in settings:
-
-```python
-    INSTALLED_APPS = [
-        ...
-        'wagtail_drawio',
-    ]
-```
-
-Upgrade your database:
+Install from PyPI:
 
 ```shell
-    ./manage.py migrate wagtail_drawio
+pip install wagtail_drawio
 ```
 
-Add the `DrawioBlock` into a `Page` or directly into a `StreamField/StreamBlock`, eg.:
+Or directly from GitHub:
+
+```shell
+pip install git+https://github.com/goutnet/wagtail-drawio.git
+```
+
+Add the app to `INSTALLED_APPS`:
 
 ```python
-    from wagtail_drawio.blocks import DrawIOImageBlock
-
-    class HomePage(Page):
-        """Home page model"""
-
-        body = fields.StreamField(
-            [
-                # ...
-                ("drawio_diagram", DrawIOImageBlock()),
-                # ...
-            ],
-            null=True,
-            blank=True,
-        )
-
+INSTALLED_APPS = [
+    # ...
+    "wagtail_drawio",
+]
 ```
 
-To display usage counts in the diagram list and enable the per-diagram usage tab, add the following to your `settings.py`:
+Run migrations:
 
-```python
-    WAGTAIL_USAGE_COUNT_ENABLED = True
+```shell
+./manage.py migrate wagtail_drawio
 ```
-
-> **Note:** After enabling this setting on an existing project, run `./manage.py rebuild_references_index` once to backfill usage data for diagrams that were created before the setting was added.
-
-Optionally, you can configure the DrawIO URL by adding the following to your `settings.py`:
-
-```python
-    WAGTAIL_DRAWIO_URL = "https://embed.diagrams.net"
-    WAGTAIL_DRAWIO_QUERY_STRING = "ui=atlas&spin=1"
-```
-
-(adjust as needed)
 
 ## Usage
 
-### Creating a Diagram
+### StreamField block
 
-Diagrams are managed directly from the main menu, check the 'Drawio` menu. Create a new Drawio model instance directly from there.
+```python
+from wagtail_drawio.blocks import DrawIOImageChooserBlock
 
-To Edit the diagram, directly double click on the image to bring the diagram editor.
+class BlogPage(Page):
+    body = StreamField(
+        [
+            # ...
+            ("diagram", DrawIOImageChooserBlock()),
+        ],
+        null=True,
+        blank=True,
+    )
+```
 
-### Using a diagram
+### Managing diagrams
 
-Add a block to your page, and select the diagram from there.
+Diagrams are managed from the **Drawio** entry in the Wagtail sidebar. Create a new diagram there, then double-click the thumbnail to open the draw.io editor.
 
-### Using the Js Code
+### Usage tracking
 
-if you are only looking for a quick JS fix, have a look at `wagtail_drawio/static/js/drawio_widget.js`. This simple js class
-can either be used with or without jQuery to transform an `&lt;img/&gt;` tag into an editor directly. Please check the
-javascript code directly, the top section provides full usage guidelines.
+```python
+# settings.py
+WAGTAIL_USAGE_COUNT_ENABLED = True
+```
 
+On an existing project, backfill the reference index once:
 
-## Project Status
+```shell
+./manage.py rebuild_references_index
+```
 
-While still green, this project is already usable as is, some
-This project is at a very early stage, and will move along as I use it internally. Features to come:
+### Custom draw.io server
 
-* Filter diagrams by tags
-* Better diagram chooser
-* Edit diagram in place from the Block (t.b.d.)
+```python
+# settings.py
+WAGTAIL_DRAWIO_URL = "https://embed.diagrams.net"   # default
+WAGTAIL_DRAWIO_QUERY_STRING = "ui=atlas&spin=1"     # default
+```
+
+## Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Building locally
+
+```shell
+make dist
+```
+
+Output goes to `out/`. See `make help` for all available targets.
+
+## License
+
+This project is distributed under the [MIT License](LICENSE).
+
+Copyright (C) 2023-2026 Florian Delizy
+
+The draw.io logo (`wagtail_drawio/static/admin/media/drawio.svg`) is copyright JGraph Ltd and distributed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).

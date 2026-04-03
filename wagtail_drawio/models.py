@@ -161,10 +161,10 @@ class DrawioImage(models.Model):
         """Returns the number of distinct pages/objects that reference this diagram."""
         from django.contrib.contenttypes.models import ContentType
         from wagtail.models import ReferenceIndex
+
         ct = ContentType.objects.get_for_model(self.__class__)
         return (
-            ReferenceIndex.objects
-            .filter(to_content_type=ct, to_object_id=str(self.pk))
+            ReferenceIndex.objects.filter(to_content_type=ct, to_object_id=str(self.pk))
             .values("object_id", "content_type")
             .distinct()
             .count()

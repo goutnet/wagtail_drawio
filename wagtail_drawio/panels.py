@@ -27,10 +27,9 @@ class DrawioUsagePanel(Panel):
 
                 url_finder = AdminURLFinder(self.request.user)
                 usages = []
-                for obj, _refs in (
-                    ReferenceIndex.get_references_to(self.instance)
-                    .group_by_source_object()
-                ):
+                for obj, _refs in ReferenceIndex.get_references_to(
+                    self.instance
+                ).group_by_source_object():
                     usages.append(
                         {
                             "object": obj,

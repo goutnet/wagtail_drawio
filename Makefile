@@ -8,11 +8,16 @@ OUT=out
 TESTENV=webroot
 
 help:
-	@echo "make env : create the environment from the requirements.txt"
+	@echo "make env          : create the environment from the requirements.txt"
 	@echo "make requirements.txt: update the requirements.txt"
-	@echo "make update-env: update the environment from requirements.txt"
-	@echo "make webtest: launch the test webserver"
-	@echo "make clean/disclean"
+	@echo "make update-env   : update the environment from requirements.txt"
+	@echo "make test         : run the test suite with coverage"
+	@echo "make coverage     : generate HTML coverage report (after make test)"
+	@echo "make lint         : run black formatter"
+	@echo "make webtest      : launch the test webserver"
+	@echo "make freshdb      : recreate the test database and superuser"
+	@echo "make dist         : build the package (sdist + wheel)"
+	@echo "make clean/distclean"
 
 .PHONY: FORCE
 
@@ -77,10 +82,14 @@ clean_database: clean_migrations
 distclean: clean clean_database
 	rm -rf env
 
+.PHONY: lint
+lint:
+	( . env/bin/activate; black . )
+
 .PHONY: dist
 dist: env
-	mkdir -p $(BUILD) $(OUT)
-	( . env/bin/activate ; python3 setup.py egg_info --egg-base $(BUILD) sdist --dist-dir=$(OUT) )
+	mkdir -p $(OUT)
+	( . env/bin/activate ; python -m build --outdir=$(OUT) )
 
 .PHONY: test
 test:

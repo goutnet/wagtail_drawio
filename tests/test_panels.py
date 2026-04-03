@@ -62,7 +62,10 @@ def test_usage_panel_with_references():
 
     assert len(context["usages"]) == 1
     assert context["usages"][0]["label"] == str(image)
-    assert context["usages"][0]["edit_url"] == "/admin/snippets/wagtail_drawio/drawioimage/1/edit/"
+    assert (
+        context["usages"][0]["edit_url"]
+        == "/admin/snippets/wagtail_drawio/drawioimage/1/edit/"
+    )
 
 
 @pytest.mark.django_db

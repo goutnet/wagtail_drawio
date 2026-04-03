@@ -61,4 +61,4 @@ def test_drawio_image_block_does_not_leak_diagram_xml():
     assert SAMPLE_PNG_BASE64 not in html
     assert SAMPLE_DIAGRAM_DATA not in html
     # Only a reference URL should be present
-    assert f'/drawio/drawio-image/{image.pk}/' in html
+    assert f"/drawio/drawio-image/{image.pk}/" in html

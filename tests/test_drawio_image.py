@@ -2,7 +2,7 @@ import pytest
 import base64
 from unittest.mock import patch, MagicMock
 from wagtail_drawio.models import DrawioImage
-import png # Import png to mock it
+import png  # Import png to mock it
 
 # A minimal valid PNG base64 string
 SAMPLE_PNG_BASE64 = "iVBORw0KGgoAAAAADAAAAAQAAADAAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
@@ -11,7 +11,8 @@ SAMPLE_DIAGRAM_DATA = f"data:image/png;base64,{SAMPLE_PNG_BASE64}"
 # A sample PNG data with an mxfile chunk for testing strip_data
 # This is a simplified representation, not a real PNG structure
 SAMPLE_PNG_WITH_MXFILE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-SAMPLE_MXFILE_CONTENT = b"<?xml version=\"1.0\" encoding=\"UTF-8\"?><mxfile>...</mxfile>"
+SAMPLE_MXFILE_CONTENT = b'<?xml version="1.0" encoding="UTF-8"?><mxfile>...</mxfile>'
+
 
 @pytest.mark.django_db
 def test_drawio_image_creation():
@@ -27,6 +28,7 @@ def test_drawio_image_creation():
     assert image.width == 1
     assert image.height == 1
 
+
 @pytest.mark.django_db
 def test_png_data_decode_false():
     image = DrawioImage.objects.create(
@@ -36,6 +38,7 @@ def test_png_data_decode_false():
         height=1,
     )
     assert image.png_data(decode=False) == SAMPLE_PNG_BASE64
+
 
 @pytest.mark.django_db
 def test_png_data_decode_true():
@@ -47,8 +50,9 @@ def test_png_data_decode_true():
     )
     assert image.png_data(decode=True) == base64.b64decode(SAMPLE_PNG_BASE64)
 
+
 @pytest.mark.django_db
-@patch('png.Reader')
+@patch("png.Reader")
 def test_png_data_strip_data(mock_png_reader):
     # Mock the png.Reader to return specific chunks
     mock_reader_instance = MagicMock()
@@ -57,10 +61,13 @@ def test_png_data_strip_data(mock_png_reader):
     # Define the chunks that the mocked reader will return
     # A minimal set of chunks including an mxfile tEXt chunk
     mock_reader_instance.chunks.return_value = [
-        (b'IHDR', b'\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00'),
-        (b'tEXt', b'mxfile\x00' + SAMPLE_MXFILE_CONTENT),
-        (b'IDAT', b'\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00'),
-        (b'IEND', b''),
+        (b"IHDR", b"\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00"),
+        (b"tEXt", b"mxfile\x00" + SAMPLE_MXFILE_CONTENT),
+        (
+            b"IDAT",
+            b"\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00",
+        ),
+        (b"IEND", b""),
     ]
 
     image = DrawioImage.objects.create(
@@ -87,8 +94,8 @@ def test_png_data_strip_data(mock_png_reader):
     # so we'll focus on ensuring the method executes without error and returns something.
 
     # A more direct test: ensure the mocked reader was called and chunks were processed
-    mock_png_reader.assert_called() # Called multiple times due to re-encoding
-    mock_reader_instance.chunks.assert_called() # Called multiple times due to re-encoding
+    mock_png_reader.assert_called()  # Called multiple times due to re-encoding
+    mock_reader_instance.chunks.assert_called()  # Called multiple times due to re-encoding
 
     # We can't easily assert the exact content of the re-encoded PNG without
     # re-implementing PNG encoding logic in the test.
@@ -100,14 +107,17 @@ def test_png_data_strip_data(mock_png_reader):
 
 
 @pytest.mark.django_db
-@patch('png.Reader')
+@patch("png.Reader")
 def test_png_as_image(mock_png_reader):
     mock_reader_instance = MagicMock()
     mock_png_reader.return_value = mock_reader_instance
     mock_reader_instance.chunks.return_value = [
-        (b'IHDR', b'\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00'),
-        (b'IDAT', b'\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00'),
-        (b'IEND', b''),
+        (b"IHDR", b"\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00"),
+        (
+            b"IDAT",
+            b"\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00",
+        ),
+        (b"IEND", b""),
     ]
 
     image = DrawioImage.objects.create(
@@ -120,15 +130,19 @@ def test_png_as_image(mock_png_reader):
     assert isinstance(result, bytes)
     assert result is not None and len(result) > 0
 
+
 @pytest.mark.django_db
-@patch('png.Reader')
+@patch("png.Reader")
 def test_png_as_base64(mock_png_reader):
     mock_reader_instance = MagicMock()
     mock_png_reader.return_value = mock_reader_instance
     mock_reader_instance.chunks.return_value = [
-        (b'IHDR', b'\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00'),
-        (b'IDAT', b'\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00'),
-        (b'IEND', b''),
+        (b"IHDR", b"\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00"),
+        (
+            b"IDAT",
+            b"\x78\x9c\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00\x00\x00\x00\x00",
+        ),
+        (b"IEND", b""),
     ]
 
     image = DrawioImage.objects.create(
@@ -141,6 +155,7 @@ def test_png_as_base64(mock_png_reader):
     assert isinstance(result, str)
     assert result is not None and len(result) > 0
 
+
 @pytest.mark.django_db
 def test_empty_diagram():
     image = DrawioImage.objects.create(
@@ -150,6 +165,7 @@ def test_empty_diagram():
         height=0,
     )
     assert image.empty() is True
+
 
 @pytest.mark.django_db
 def test_non_empty_diagram():

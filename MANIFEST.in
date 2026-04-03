@@ -1,5 +1,6 @@
 include LICENSE
-include README.rst
+include README.md
+include requirements.txt
 include wagtail_drawio/changelog.txt
 include wagtail_drawio/templates/wagtail_drawio/admin/icons/*.svg
 include wagtail_drawio/templates/wagtail_drawio/admin/icons/LICENSE
