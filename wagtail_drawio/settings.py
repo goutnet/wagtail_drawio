@@ -20,7 +20,7 @@ def drawio_query_string():
     """
     query_string = getattr(settings, "WAGTAIL_DRAWIO_QUERY_STRING", "ui=atlas&spin=1")
 
-    if not query_string.startswith("?"):
+    if query_string.startswith("?"):
         query_string = query_string[1:]
 
     if query_string.endswith("&"):

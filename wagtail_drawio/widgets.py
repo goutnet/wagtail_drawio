@@ -26,5 +26,5 @@ class DrawioWidget(forms.Textarea):
     def get_context(self, name, value, attrs):
         """add the drawio_url to the context"""
         context = super().get_context(name, value, attrs)
-        context["drawio_url"] = mark_safe(drawio_url)
+        context["drawio_url"] = mark_safe(drawio_url())
         return context
