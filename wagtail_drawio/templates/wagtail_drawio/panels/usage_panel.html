@@ -1,0 +1,24 @@
+{% load i18n %}
+<fieldset>
+    <legend class="w-field__label">{% trans "Used on" %}</legend>
+    {% if usages %}
+        <ul class="w-space-y-2 w-mt-2">
+            {% for usage in usages %}
+                <li class="w-flex w-items-center w-gap-x-3">
+                    <span class="w-text-14 w-text-text-meta">{{ usage.type|capfirst }}</span>
+                    {% if usage.edit_url %}
+                        <a class="w-text-14 w-text-text-link-default hover:w-text-text-link-hover w-no-underline w-transition"
+                           href="{{ usage.edit_url }}">
+                            {{ usage.label }}
+                        </a>
+                    {% else %}
+                        <span class="w-text-14">{{ usage.label }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="w-text-14 w-text-text-meta w-mt-2">{% trans "Not used anywhere." %}</p>
+    {% endif %}
+
+</fieldset>
